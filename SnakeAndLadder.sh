@@ -20,10 +20,10 @@ function playerNextMove()
 					playerCurrentPosition=$playerCurrentPosition
 					;;
 			$LADDER)
-					playerCurrentPosition=$(( playerCurrentPosition + dieValue ))
+					ladderMove
 					;;
 			$SNAKE)
-					playerCurrentPosition=$(( playerCurrentPosition - dieValue ))
+					snakeMove
 					;;
 	esac
 }
@@ -41,7 +41,7 @@ function randomValues()
 function snakeMove()
 {
 	playerCurrentPosition=$(( playerCurrentPosition - dieValue ))
-	if (( playerCurrentPosition < 0 ))
+	if (( playerCurrentPosition < $PLAYER_START_POSITION ))
 	then
 		playerCurrentPosition=$PLAYER_START_POSITION
 	fi
@@ -52,6 +52,10 @@ function snakeMove()
 function ladderMove()
 {
 	playerCurrentPosition=$(( playerCurrentPosition + dieValue ))
+	if (( $playerCurrentPosition > $PLAYER_WINNING_POSITION ))
+	then
+		playerCurrentPosition=$(( $playerCurrentPosition - $dieValue ))
+	fi
 }
 
 
