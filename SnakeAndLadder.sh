@@ -1,9 +1,31 @@
 #!/bin/bash -x
 echo "*********************WELCOME TO SNAKE AND LADDER SIMULATION**************"
+
 #CONSTANT
-PLAYER=1
 PLAYER_START_POSITION=0
+NO_PLAY=1
+LADDER=2
+SNAKE=3
 
 #VARIABLE
-random=$((RANDOM%6+1))
-echo "After rolling die Player got $random"
+dieValue=$(( RANDOM%6+1 ))
+playerMove=$(( RANDOM%3+1 ))
+playerCurrentPosition=$PLAYER_START_POSITION
+
+#Checking the options for player's next move
+function playerNextMove()
+{
+	case $playerMove in
+			$NO_PLAY)
+					playerCurrentPosition=$playerCurrentPosition
+					;;
+			$LADDER)
+					playerCurrentPosition=$(( playerCurrentPosition + dieValue ))
+					;;
+			$SNAKE)
+					playerCurrentPosition=$(( playerCurrentPosition - dieValue ))
+					;;
+	esac
+}
+
+playerNextMove
