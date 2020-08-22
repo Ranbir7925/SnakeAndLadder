@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash 
 echo "*********************WELCOME TO SNAKE AND LADDER SIMULATION**************"
 
 #CONSTANT
@@ -18,6 +18,7 @@ function playerNextMove()
 	case $playerMove in
 			$NO_PLAY)
 					playerCurrentPosition=$playerCurrentPosition
+					echo -e "Its NO PLAY move no change will happen..!!\nCurrent postion ---> $playerCurrentPosition\n"
 					;;
 			$LADDER)
 					ladderMove
@@ -44,7 +45,10 @@ function snakeMove()
 	if (( playerCurrentPosition < $PLAYER_START_POSITION ))
 	then
 		playerCurrentPosition=$PLAYER_START_POSITION
+		echo $playerCurrentPostion
 	fi
+	echo -e "Its SNAKE move Player's position will be decremented by $dieValue\nCurrent postion ---> $playerCurrentPosition\n"
+
 }
 
 
@@ -56,6 +60,7 @@ function ladderMove()
 	then
 		playerCurrentPosition=$(( $playerCurrentPosition - $dieValue ))
 	fi
+	echo -e "Its LADDER move Player's position will be incremented by $dieValue\nCurrent postion ---> $playerCurrentPosition\n"
 }
 
 
