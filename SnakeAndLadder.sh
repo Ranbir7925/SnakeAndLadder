@@ -1,84 +1,92 @@
-#!/bin/bash 
+#!/bin/bash
 echo "*********************WELCOME TO SNAKE AND LADDER SIMULATION**************"
-declare -A diceAndPosition
 
-
-#CONSTANT
-PLAYER_START_POSITION=0
+#CONSTANTS
+PLAYER_STARTING_POSITION=0
 PLAYER_WINNING_POSITION=100
 NO_PLAY=1
 LADDER=2
 SNAKE=3
 
-#VARIABLE
+#VARIABLES
 noOfDice=0
-playerCurrentPosition=$PLAYER_START_POSITION
+playerCurrentPosition=$PLAYER_STARTING_POSITION
+positionOfPlayer1=$PLAYER_STARTING_POSITION
+positionOfPlayer2=$PLAYER_STARTING_POSITION
 
 #Checking the options for player's next move
-function playerNextMove()
+function playerNextMove
 {
-	(( noOfDice++ ))
-	randomValues
+	playerCurrentPosition=$1
+	player=$2
+	generatingRandomValues
+	((noOfDice++))
 	case $playerMove in
-			$NO_PLAY)
-					playerCurrentPosition=$playerCurrentPosition
-					echo -e "DICE-->$dieValue\nMOVE-->NO PLAY\nIt's NO PLAY move Player position will be same...!!\nCurrent postion --->$playerCurrentPosition\nPositon After Move -->$playerCurrentPosition\n\n"
-					;;
-			$LADDER)
-					ladderMove
-					;;
-			$SNAKE)
-					snakeMove
-					;;
+		$NO_PLAY)
+			playerCurrentPosition=$playerCurrentPosition
+			echo -e "$2\nDICE-->$dieValue\nMOVE-->NO PLAY\nIt's NO PLAY move Player position will be same...!!\nCurrent postion --->$playerCurrentPosition\nPositon After Move -->$playerCurrentPosition\n\n"
+			;;
+		$LADDER)
+			#printf 
+			ladderMoves $player
+			;;
+		$SNAKE)
+			#printf "$2"
+			snakeMoves $player
+			;;
 	esac
-	#printf "Reached to position : $timeOfReachedPosition"
-}
-
-
-#Function to Generate random values
-function randomValues()
-{
-	dieValue=$(( RANDOM%6+1 ))
-	playerMove=$(( RANDOM%3+1 ))
-}
-
-
-#Function to perform the snake's operation
-function snakeMove()
-{
-	echo -e "DICE-->$dieValue\nMOVE-->SNAKE MOVE\nIt's SNAKE MOVE Player position will be decremented by $dieValue\nCurrent postion --->$playerCurrentPosition"
-	playerCurrentPosition=$(( playerCurrentPosition - dieValue ))
-	if (( playerCurrentPosition < $PLAYER_START_POSITION ))
+	printf "Number of die played:$noOfDice\n"
+	#If either of the player reaches the 100th position first then that player wins and the game's stopped
+	if (( $playerCurrentPosition == 100 ))
 	then
-		playerCurrentPosition=$PLAYER_START_POSITION
+		echo -e "\n$2 wins"
+		exit
 	fi
-	echo -e "Positon After Move -->$playerCurrentPosition\n\n"
-
 }
 
+#Function to Generate random values for die roll and player's next move
+function generatingRandomValues()
+{
+	playerMove=$(( RANDOM%3+1 ))
+	dieValue=$(( RANDOM%6+1 ))
+}
 
 #Function to perform the ladder's operation
-function ladderMove()
+function ladderMoves()
 {
-	playerCurrentPosition=$(( playerCurrentPosition + dieValue ))
+	playerCurrentPosition=$(( $playerCurrentPosition + $dieValue ))
 	if (( $playerCurrentPosition > $PLAYER_WINNING_POSITION ))
 	then
 		playerCurrentPosition=$(( $playerCurrentPosition - $dieValue ))
 	fi
-	echo -e "DICE-->$dieValue\nMOVE-->LADDER MOVE\nIt's LADDER MOVE Player position will be incremented by $dieValue\nCurrent postion ---> $(( $playerCurrentPosition-$dieValue ))\nPositon After Move -->$playerCurrentPosition\n\n"
-
+	echo -e "$1\nDICE-->$dieValue\nMOVE-->LADDER MOVE\nIt's LADDER MOVE Player position will be incremented by $dieValue\nCurrent postion ---> $(( $playerCurrentPosition-$dieValue ))\nPositon After Move -->$playerCurrentPosition\n\n"
 }
 
+#Function to perform the snake's operation
+function snakeMoves()
+{
+	echo -e "$1\nDICE-->$dieValue\nMOVE-->SNAKE MOVE\nIt's SNAKE MOVE Player position will be decremented by $dieValue\nCurrent postion --->$playerCurrentPosition"
+	playerCurrentPosition=$(( $playerCurrentPosition - $dieValue ))
+	if (( $playerCurrentPosition < $PLAYER_STARTING_POSITION))
+	then
+		playerCurrentPosition=$PLAYER_STARTING_POSITION
+	fi
+	echo -e "Positon After Move -->$playerCurrentPosition\n\n"
+}
 
-
+#Function to play till one of  the player wins
 function play()
 {
-	while (( $playerCurrentPosition < $PLAYER_WINNING_POSITION ))
+	while (( $positionOfPlayer1 < $PLAYER_WINNING_POSITION && $positionOfPlayer2 < $PLAYER_WINNING_POSITION ))
 	do
-		playerNextMove
+		playerNextMove $positionOfPlayer1 Player1
+		positionOfPlayer1=$playerCurrentPosition
+
+		playerNextMove $positionOfPlayer2 Player2
+		positionOfPlayer2=$playerCurrentPosition
 	done
 }
 
+#MAIN
 
 play
-printf "Total no of Dice Played : $noOfDice"
